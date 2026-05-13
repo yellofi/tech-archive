@@ -14,7 +14,9 @@ GRPO(24,000 롤아웃) 대비 평균 **+6%**, 최대 **+20%** 성능을 **35배 
 
 ## 핵심 수식
 
-$$\langle\Pi^*\rangle = \arg\max_{\Pi} \mathbb{E}_{(x,m)\sim\mathcal{T}} \left[\mu\left(\Phi(x;\Pi,\Theta_{frozen}), m\right)\right]$$
+```
+argmax_Π  E[(x,m)~T] [ μ( Φ(x; Π, Θ_frozen), m ) ]
+```
 
 - **Φ**: 복합 AI 시스템 (여러 LLM 모듈의 조합)
 - **Π**: 최적화 대상 — 각 모듈의 프롬프트(instruction) 집합
