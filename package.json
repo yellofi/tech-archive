@@ -1,6 +1,7 @@
 {
   "name": "tech-archive",
   "version": "1.0.0",
+  "type": "module",
   "description": "Personal tech research archive",
   "scripts": {
     "docs:dev": "vitepress dev docs",
