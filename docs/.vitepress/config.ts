@@ -24,6 +24,14 @@ export default defineConfig({
             { text: 'DSPy', link: '/agent/dspy' },
             { text: 'GEPA', link: '/agent/gepa' },
           ]
+        },
+        {
+          text: 'RAG & Orchestration',
+          items: [
+            { text: 'RAG', link: '/agent/rag' },
+            { text: 'LangChain & LangGraph', link: '/agent/langchain-langgraph' },
+            { text: 'LangGraph → Hermes 전환', link: '/agent/langgraph-to-hermes' },
+          ]
         }
       ]
     },
