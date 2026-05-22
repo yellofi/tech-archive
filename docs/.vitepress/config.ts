@@ -20,6 +20,7 @@ export default defineConfig({
           items: [
             { text: '개요', link: '/agent/' },
             { text: 'Harness Engineering 이란?', link: '/agent/harness-engineering' },
+            { text: 'AI 3사 Harness 생태계', link: '/agent/ai-harness-ecosystem' },
             { text: 'Hermes Agent (26.05)', link: '/agent/hermes-agent' },
             { text: 'DSPy', link: '/agent/dspy' },
             { text: 'GEPA', link: '/agent/gepa' },
