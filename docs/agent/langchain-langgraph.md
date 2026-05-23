@@ -92,3 +92,75 @@ class StockState(TypedDict):
 ```
 
 이 구조는 LangGraph가 강점을 발휘하는 영역이다. **흐름이 정해져 있고, 각 단계의 입출력이 명확하며, 병렬 처리가 필요한 파이프라인**.
+
+---
+
+## LangGraph의 현재 포지션 (2025~2026)
+
+### 오케스트레이션 레이어 경쟁
+
+Google ADK, Anthropic Agent SDK/MCP가 등장하면서 LangGraph의 위치가 재조명되고 있다. 이 경쟁을 이해하려면 **레이어 분리**로 보는 시각이 필요하다.
+
+```
+Infrastructure   AWS / GCP / Azure
+Model            Claude / Gemini / GPT
+Orchestration    LangGraph / ADK / MCP   ← 이 레이어가 경쟁 중
+Application      실제 서비스
+```
+
+AWS가 있어도 GCP를 쓰는 팀이 있듯, 레이어가 다르면 경쟁이 아니라 공존이 가능하다.
+
+### 각사 프레임워크의 전략적 의도
+
+Google과 Anthropic이 각자 프레임워크를 미는 것은 단순한 편의 제공이 아니다. **자사 모델 ↔ 자사 프레임워크 간 성능/비용 최적화를 의도적으로 자사 스택에서 가장 잘 되도록 설계**한다. 개발자를 생태계에 묶어두는 것이 목적이다.
+
+```
+Google     →  Gemini + ADK + Vertex AI     (우리 것만 써도 다 됨)
+Anthropic  →  Claude + MCP + Agent SDK     (우리 것만 써도 다 됨)
+```
+
+자사 모델 사용 시 성능·비용 최적화가 자사 프레임워크에서 제일 잘 되는 것은 의도된 설계다.
+
+### LangGraph가 여전히 쓰이는 이유
+
+**① 생태계 규모**
+
+LangChain/LangGraph 커뮤니티는 현재 AI 에이전트 생태계 중 가장 크다. 레퍼런스, 예제, 스택오버플로우 답변이 압도적으로 많고 프로덕션 사례가 이미 쌓여 있다. ADK는 2025년 4월 출시, MCP는 아직 확산 중이다.
+
+**② 모델 벤더 중립성**
+
+```python
+# LangGraph 안에서 모델 교체는 몇 줄 수정으로 가능
+from langchain_anthropic import ChatAnthropic
+from langchain_google_genai import ChatGoogleGenerativeAI
+
+# Claude → Gemini 전환
+llm = ChatAnthropic(model="claude-opus-4-5")
+llm = ChatGoogleGenerativeAI(model="gemini-2.0-flash")  # 이 줄만 바꾸면 됨
+```
+
+특정 모델에 락인되기 싫은 팀은 LangGraph를 선호한다. **모델은 갈아끼울 수 있는 부품, LangGraph는 그 위의 워크플로우 레이어**라는 구분이 핵심이다.
+
+### LangGraph가 실제로 잘 하는 것
+
+"iterative reasoning에 특화"라고 이해하기 쉽지만 실제 강점은 더 넓다.
+
+| 영역 | 내용 |
+|---|---|
+| **Iterative reasoning** | 반복·분기 제어, 루프 설계 |
+| **상태 관리** | 대화·작업 상태를 그래프 전체에서 공유·유지 |
+| **멀티에이전트 조율** | 에이전트 간 Handoff, 병렬 실행 |
+| **프로덕션 신뢰성** | Checkpointing, 재시도, Human-in-the-loop |
+
+### ADK·MCP로의 전환 용이성
+
+LangGraph를 알면 ADK나 MCP로 갈아타는 것이 어렵지 않다. **개념이 같고 문법만 다르기** 때문이다.
+
+| LangGraph | ADK / MCP |
+|---|---|
+| State (TypedDict) | Session / Memory |
+| Node (함수) | Agent / Tool |
+| Edge (연결) | Routing / Handoff |
+| Checkpointing | Agent Runtime 상태 저장 |
+
+LangGraph로 상태 기계와 에이전트 조율의 개념을 익혀두면, 특정 벤더 스택으로의 이전은 학습 비용이 낮다.

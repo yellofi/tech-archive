@@ -142,6 +142,43 @@ Google Search의 실시간성, BigQuery·AlloyDB의 데이터 레이어, Workspa
 
 ---
 
+## 락인 전략의 구조적 의도
+
+각사 프레임워크가 "편하게 쓸 수 있도록" 제공된다는 인식은 절반만 맞다. **자사 모델과 자사 프레임워크 사이의 성능·비용 최적화를 의도적으로 자사 스택에서 가장 잘 되도록 설계**하는 것이 핵심 동기다.
+
+```
+Google     →  Gemini + ADK + Vertex AI     = "우리 것만 써도 다 됨"을 증명
+Anthropic  →  Claude + MCP + Agent SDK     = "우리 것만 써도 다 됨"을 증명
+```
+
+자사 모델로 자사 프레임워크를 쓸 때 성능이 제일 잘 나오는 것은 우연이 아니라 설계다. 개발자가 한 번 올라타면 이탈 비용이 높아지는 구조를 의도적으로 만든다.
+
+---
+
+## LangGraph와의 공존: 레이어가 다르다
+
+3사 프레임워크가 치열하게 경쟁하는 상황에서도 LangGraph가 프로덕션에서 계속 쓰이는 이유는 **레이어 자체가 다르기** 때문이다.
+
+```
+Infrastructure   AWS / GCP / Azure
+Model            Claude / Gemini / GPT
+Orchestration    LangGraph / ADK / MCP   ← 같은 레이어처럼 보이지만
+Application      실제 서비스
+```
+
+ADK와 MCP는 각사 모델에 최적화된 vendor-specific 오케스트레이션이고, LangGraph는 모델을 갈아끼울 수 있는 **vendor-neutral 오케스트레이션 레이어**다. AWS가 있어도 GCP를 쓰는 팀이 있듯, 선택 기준이 다르면 공존한다.
+
+| 기준 | ADK / MCP 선택 | LangGraph 선택 |
+|---|---|---|
+| 자사 서비스 깊은 통합 | Google·Anthropic 인프라 활용 | 해당 없음 |
+| 멀티 모델 유연성 | 어렵거나 최적화 포기 | 모델 교체가 몇 줄 수정 |
+| 생태계·레퍼런스 | 아직 초기 | 가장 큰 AI 에이전트 커뮤니티 |
+| 프로덕션 안정성 | 검증 중 | 이미 레퍼런스 축적 |
+
+당분간 공존이 지속될 가능성이 높다. LangGraph 개념(State, Node, Edge, Checkpointing)을 익혀두면 ADK·MCP로의 전환은 문법 차이 수준이라 이전 비용도 낮다.
+
+---
+
 ## 시사점
 
 세 전략은 서로 다른 레이어를 공략하고 있어 단기 수렴보다는 **역할 분화** 가능성이 높다:
